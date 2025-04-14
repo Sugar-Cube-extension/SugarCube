@@ -1,0 +1,28 @@
+{
+  "name": "sugar-cube",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:docker": "vite build --config vite.docker.config.ts"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^2.5.3",
+    "@tsconfig/svelte": "^5.0.4",
+    "@types/chrome": "^0.0.228",
+    "@types/node": "^20.17.30",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.35",
+    "svelte": "^5.26.2",
+    "svelte-check": "^4.1.6",
+    "svelte-language-server": "0.17.11",
+    "svelte-preprocess": "^6.0.3",
+    "svelte2tsx": "^0.6.4",
+    "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "vite": "^4.5.2"
+  }
+}
