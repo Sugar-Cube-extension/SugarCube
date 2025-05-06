@@ -1,4 +1,4 @@
-<!-- src/popup/Popup.svelte -->
+
 <script lang="ts">
 	let msg = 'Hello from SugarCube!';
 </script>
