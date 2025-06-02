@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0f0f0f;
+  color: #ffffff;
+}
+
+.app {
+  min-width: 300px;
+  padding: 1rem;
+  background: #1a1a1a;
+  border-radius: 12px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #bb86fc;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #222;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.buttons,
+.form {
+  margin-top: 1rem;
+}
+
+.button-primary,
+.button-submit {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.button-primary:hover,
+.button-submit:hover {
+  background-color: #9d4edd;
+}
+
+.coupon-list {
+  list-style: disc inside;
+  color: #facc15; 
+}
+
+.coupon-item {
+  margin-bottom: 0.25rem;
+}
+
+.empty {
+  color: #888;
+}
+
+.loading {
+  color: #facc15;
+}
+
+.error {
+  color: #ef4444;
+}

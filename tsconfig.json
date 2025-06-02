@@ -11,12 +11,12 @@
     "sourceMap": true,
     "rootDir": "src",
     "outDir": "dist",
-    "types": ["chrome", "node","svelte"],
+    "types": ["chrome", "node", "svelte"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules/*"]
+  "exclude": ["node_modules"]
 }
