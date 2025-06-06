@@ -1,25 +1,49 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
-  root: 'src/popup',
-  plugins: [svelte()],
-  build: {
-    outDir: path.resolve(__dirname, 'dist/popup'), // isolate popup dist if you add background/content later
-    emptyOutDir: true,
-    sourcemap: true // helpful for debugging in Chrome Extension DevTools
-  },
-  css: {
-    postcss: path.resolve(__dirname, 'postcss.config.cjs'),
-  },
+  plugins: [
+    svelte(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: path.resolve(__dirname, 'public/manifest.json'),
+          dest: '.' 
+        },
+        {
+          src: path.resolve(__dirname, 'src/assets/icon.png'),
+          dest: 'assets' 
+        }
+      ]
+    })
+  ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  }, 
+
+  build: {
+    rollupOptions: {
+      input: {
+        popup: path.resolve(__dirname, 'src/popup/index.html'),  // <-- updated here
+        background: path.resolve(__dirname, 'src/background/background.ts'),
+        content: path.resolve(__dirname, 'src/content/content.ts'),
+      },
+      output: {
+        entryFileNames: (chunkInfo) => {
+          if (chunkInfo.name === 'background') return 'background.js';
+          if (chunkInfo.name === 'content') return 'content.js';
+          return 'assets/[name]-[hash].js';
+        },
+        assetFileNames: 'assets/[name]-[hash][extname]',
+      }
     },
-  },
+    outDir: 'dist',
+    emptyOutDir: true,
+    sourcemap: true
+  }
 });

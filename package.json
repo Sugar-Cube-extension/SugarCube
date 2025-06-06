@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && cp ~/Obrazy/sugarcube.png dist/icon.png",
     "preview": "vite preview",
     "build:docker": "vite build --config vite.docker.config.ts"
   },
@@ -23,6 +23,20 @@
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
-    "vite": "^4.5.2"
-  }
+    "vite": "^4.5.2",
+    "vite-plugin-static-copy": "^0.15.0"
+  },
+  "description": "This template should help get you started developing with Svelte and TypeScript in Vite.",
+  "main": "svelte.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sugar-Cube-extension/SugarCube.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sugar-Cube-extension/SugarCube/issues"
+  },
+  "homepage": "https://github.com/Sugar-Cube-extension/SugarCube#readme"
 }
