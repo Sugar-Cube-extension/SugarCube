@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "requestHeaders": [
+        {
+          "header": "User-Agent",
+          "operation": "set",
+          "value": "SugarCube/1.0"
+        }
+      ]
+    },
+    "condition": {
+      "urlFilter": "localhost",
+      "resourceTypes": ["xmlhttprequest"]
+    }
+  }
+]

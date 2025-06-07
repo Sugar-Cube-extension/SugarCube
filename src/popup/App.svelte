@@ -1,31 +1,34 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { getCoupons, saveCoupon } from '../lib/api';
+  import { getOrCreateUUID } from '../lib/uuid';
 
-  const useMockData = true;
-
+  let uuid = '';
   let coupons: string[] = [];
   let site: string = '';
   let newCoupon: string = '';
   let loading = false;
   let error = '';
+  const useMockData = false;
 
-  if (useMockData) {
-    coupons = [
-      "Kod rabatowy 20% na zakupy w Eobuwie! - MAJOWKA",
-      "Kod rabatowy 25 zł na zakupy w Lidl! - RABAT25",
-      "Kod rabatowy 40% na pierwsze zakupy w SHEIN! - NEWUSER40",
-      "Kod rabatowy 5% na zakupy w adidas! - RAB-WXWC-PHVW-Y5PA-LWLV"
-    ];
-  }
+  onMount(async () => {
+    uuid = await getOrCreateUUID();
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const url = tabs[0]?.url;
+      if (url) {
+        const domain = new URL(url).hostname.replace("www.", "");
+        site = domain;
+        fetchCoupons();
+      }
+    });
+  });
 
   async function fetchCoupons() {
-    if (useMockData) return; // skip API if in dev mode
-
     loading = true;
     error = "";
     try {
-      const data = await getCoupons(site);
+      const data = await getCoupons(site, uuid); 
       coupons = data.coupons || [];
     } catch (err) {
       error = "Failed to fetch coupons.";
@@ -34,11 +37,35 @@
     }
   }
 
+  async function testCouponsOnPage() {
+    loading = true;
+    error = "";
+
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      const tab = tabs[0];
+      if (!tab?.id) return;
+
+      try {
+        const response = await chrome.tabs.sendMessage(tab.id, {
+          action: "testCoupons",
+          coupons
+        });
+
+        console.log("Test Results:", response.results);
+      } catch (err) {
+        error = "Failed to test coupons.";
+      } finally {
+        loading = false;
+      }
+    });
+  }
+
   async function submitCoupon() {
+    if (!newCoupon.trim()) return;
     loading = true;
     error = "";
     try {
-      await saveCoupon(site, newCoupon);
+      await saveCoupon(site, newCoupon, uuid);
       newCoupon = "";
       await fetchCoupons();
     } catch (err) {
@@ -47,61 +74,43 @@
       loading = false;
     }
   }
-
-  onMount(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const url = tabs[0]?.url;
-      if (url) {
-        const domain = (new URL(url)).hostname.replace("www.", "");
-        site = domain;
-      }
-    });
-  });
 </script>
 
-<main class="app">
-  <h1 class="title">SugarCube</h1>
+<main class="p-4 space-y-4">
+  <h1 class="text-xl font-bold">
+    {site ? `Coupons for ${site}` : 'Loading site...'}
+  </h1>
 
-  <input
-    class="input"
-    placeholder="Enter site (e.g., amazon.com)"
-    bind:value={site}
-  />
+  {#if loading}
+    <p>Loading...</p>
+  {:else if error}
+    <p class="text-red-600">{error}</p>
+  {/if}
 
-  <div class="buttons">
-    <button class="button-primary" on:click={fetchCoupons} disabled={loading}>
-      Get Coupons
-    </button>
-  </div>
-
-  <div>
-    <h2 class="subtitle">Available Coupons:</h2>
+  {#if !loading && !error}
     {#if coupons.length > 0}
-      <ul class="coupon-list">
+      <ul class="list-disc pl-5">
         {#each coupons as coupon}
-          <li class="coupon-item">{coupon}</li>
+          <li>{coupon}</li>
         {/each}
       </ul>
     {:else}
-      <p class="empty">No coupons found for this site.</p>
+      <p class="text-gray-500">No coupons found yet.</p>
     {/if}
-  </div>
+  {/if}
 
-  <div class="form">
+  <div class="space-y-2">
     <input
-      class="input"
-      placeholder="Enter new coupon"
       bind:value={newCoupon}
+      class="border rounded p-2 w-full"
+      type="text"
+      placeholder="Enter new coupon"
     />
-    <button class="button-submit" on:click={submitCoupon} disabled={loading}>
-      Send Coupon
+    <button on:click={submitCoupon} class="bg-blue-600 text-white p-2 rounded w-full hover:bg-blue-700">
+      Submit Coupon
+    </button>
+    <button on:click={testCouponsOnPage} class="bg-green-600 text-white p-2 rounded w-full hover:bg-green-700">
+      Test Coupons on Page
     </button>
   </div>
-
-  {#if loading}
-    <p class="loading">Loading...</p>
-  {/if}
-  {#if error}
-    <p class="error">{error}</p>
-  {/if}
 </main>

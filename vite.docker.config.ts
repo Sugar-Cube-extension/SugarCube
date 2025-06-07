@@ -1,4 +1,3 @@
-// vite.docker.config.ts
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import path from 'node:path';
@@ -9,9 +8,9 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [svelte()],
-  root: 'src/popup', // This is the popup UI only
+  root: 'src/popup', 
   build: {
-    outDir: '../../dist', // Output folder for Docker/nginx
+    outDir: '../../dist', 
     emptyOutDir: true
   },
   resolve: {

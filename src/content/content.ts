@@ -1,12 +1,39 @@
-// console.log('[Sugar Cube] Content script loaded.');
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.action === "testCoupons") {
+    const coupons = msg.coupons;
+    const input = document.querySelector<HTMLInputElement>(
+      "input[name*=coupon], input[placeholder*=coupon], input[id*=coupon]"
+    );
 
-//detect and store shop
-import { isSupportedShop } from '@/lib/sites';
-import { storage } from '@/lib/storage';
+    if (!input) {
+      sendResponse({ success: false, reason: "No coupon input found." });
+      return;
+    }
 
-const hostname = window.location.hostname;
+    const results: { coupon: string; success: boolean }[] = [];
 
-if (isSupportedShop(hostname)) {
-  storage.set('currentShop', hostname);
-  chrome.runtime.sendMessage({ type: 'shop_detected', hostname });
-}
+    (async () => {
+      for (const coupon of coupons) {
+        input.value = coupon;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+
+        
+        const button = document.querySelector<HTMLButtonElement>(
+          "button:contains('Apply'), button:contains('Zastosuj')"
+        );
+        button?.click();
+
+        await new Promise((r) => setTimeout(r, 2000)); 
+        
+        const pageText = document.body.innerText.toLowerCase();
+        const success = !pageText.includes("invalid") && !pageText.includes("nieprawidłowy");
+
+        results.push({ coupon, success });
+      }
+
+      sendResponse({ success: true, results });
+    })();
+
+    return true; 
+  }
+});
