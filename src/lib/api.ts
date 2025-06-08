@@ -1,29 +1,22 @@
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "http://host.docker.internal:8080/api";
 
 /**
- * fetches coupons for a given site and user session UUID.
- * @param site - the site domain 
- * @param uuid - the user's UUID
+ * Fetches coupons for a given site and user session UUID.
  */
 export async function getCoupons(site: string, uuid: string) {
   try {
-    const response = await fetch(`${API_BASE_URL}/coupons`, {
-      method: "POST", 
+    const response = await fetch(`${API_BASE_URL}/coupons?site=${encodeURIComponent(site)}`, {
+      method: "GET",
       headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        site,
-        source: uuid 
-      })
+        "SC-Api-version": "v1"
+      }
     });
 
     if (!response.ok) {
       throw new Error(`Error fetching coupons: ${response.status}`);
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Failed to fetch coupons:", error);
     throw error;
@@ -31,20 +24,17 @@ export async function getCoupons(site: string, uuid: string) {
 }
 
 /**
- * saves a coupon for a given site and user session UUID.
- * @param site - the site domain
- * @param couponCode - the coupon code to save
- * @param uuid - the user's UUID
+ * Saves a coupon for a given site and user session UUID.
  */
 export async function saveCoupon(site: string, couponCode: string, uuid: string) {
   try {
-    const response = await fetch(`${API_BASE_URL}/coupons`, {
+    const response = await fetch(`${API_BASE_URL}/coupons?site=${encodeURIComponent(site)}`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "SC-Api-version": "v1"
       },
       body: JSON.stringify({
-        site,
         code: couponCode,
         source: uuid
       })
@@ -54,8 +44,7 @@ export async function saveCoupon(site: string, couponCode: string, uuid: string)
       throw new Error(`Error saving coupon: ${response.status}`);
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Failed to save coupon:", error);
     throw error;
