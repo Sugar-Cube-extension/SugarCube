@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp ~/Obrazy/sugarcube.png dist/icon.png",
+    "build": "vite build && cp ./sugarcube.png dist/icon.png",
     "preview": "vite preview",
     "build:docker": "vite build --config vite.docker.config.ts"
   },
